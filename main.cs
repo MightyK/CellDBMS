@@ -226,4 +226,10 @@ class Program {
             return 0;
         }
     }
+
+    // Represents a collection of Cell objects
+    public class CellData {
+        private int numCells = 0;   // Number of devices stored
+        private Dictionary<int, Cell> cellData; // Dictionary used to store the devices
+    }
 }
