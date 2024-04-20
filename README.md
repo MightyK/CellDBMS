@@ -43,6 +43,9 @@ Using an unfamiliar language to do operations on a csv file.
 ### What company (oem) has the highest average weight of the phone body?
     The company with the highest average weight was HP with an average weight of 453.6 (g).
 
+    Screenshot:
+![Screenshot of MaxAvgWeightCell function output](<Screenshot 2024-04-20 at 3.50.26 PM.png>)
+
 
 ### Was there any phones that were announced in one year and released in another? What are they? Give me the oem and models.
     There were 4 Cell devices that were announced in one year and released in another:
@@ -51,13 +54,22 @@ Using an unfamiliar language to do operations on a csv file.
         Xiaomi Redmi K30 5G
         Xiaomi Mi Mix Alpha
 
+    Screenshot:
+![Screenshot of DelayedCells function output](<Screenshot 2024-04-20 at 3.49.38 PM.png>)
+
 
 ### How many phones have only one feature sensor?
     432
 
+    Screenshot: 
+![Screenshot of OneFeatureCells function output](<Screenshot 2024-04-20 at 4.07.05 PM.png>)
+
 
 ### What year had the most phones launched in any year later than 1999? 
     2019
+
+    Screenshot:
+![Screenshot of PrintYearlyReleases subprogram output](<Screenshot 2024-04-20 at 3.50.53 PM.png>)
 
 ### Screenshot of Results: 
 ![Screenshot of code output](<Screenshot 2024-04-20 at 3.30.05 PM.png>)
