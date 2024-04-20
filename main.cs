@@ -484,7 +484,28 @@ class Program {
     }
 
     public static void MaxAvgWeightCell(CellData cellData) {
+        float maxAvg = 0;
+        string maxAvgOEM = "";
 
+        Dictionary<string, List<Cell>> cellsOEM = cellData.GetCellsByOEM();
+
+        foreach (KeyValuePair<string, List<Cell>> cell in cellsOEM) {
+            string oem = cell.Key;
+            float avgWeight = 0;
+
+            List<Cell> cells = cell.Value;
+
+            for (int i = 0; i < cells.Count; i++) {
+                avgWeight += (float)cells[i].GetColumn(Cell.Attributes.BodyWeight);
+            }
+
+            avgWeight /= cells.Count;
+
+            if (avgWeight > maxAvg) {
+                maxAvg = avgWeight;
+                maxAvgOEM = oem;
+            }
+        }
     }   
 
     public static void OneFeatureCells(CellData cellData)  {
