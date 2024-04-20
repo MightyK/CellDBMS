@@ -558,6 +558,114 @@ class Program {
     }
 
     public static void UnitTests() {
+        Console.WriteLine("\n\nUNIT TESTS: ");
+        
+        CellData cellData = new CellData();
+        int seen = cellData.GenerateCellData(fileName); // Parse CSV data and generate cell database
 
+        // Test various aspects of the cell data
+        Console.WriteLine(String.Format("Lines in file: {0}", seen));
+
+        Console.WriteLine(string.Format("Database is not empty: {0}", cellData.GetNumCells() > 0))
+
+
+        Cell testCell = cellData.GetCell(300);
+        Object[] columns = testCell.GetColumns();
+
+        Console.WriteLine(String.Format("OEM type: {0}: Matches requirement: {1}", columns[0].GetType(), columns[0].GetType() == typeof(string)));
+        Console.WriteLine(String.Format("Model type: {0}: Matches requirement:{1}", columns[1].GetType(), columns[1].GetType() == typeof(string)));
+        Console.WriteLine(String.Format("Launch Announce type: {0}: Matches requirement:{1}", columns[2].GetType(), columns[2].GetType() == typeof(int)));
+        Console.WriteLine(String.Format("Launch status type: {0}: Matches requirement:{1}", columns[3].GetType(), columns[3].GetType() == typeof(string)));
+        Console.WriteLine(String.Format("Body Dimensions : {0}: Matches requirement:{1}", columns[4].GetType(), columns[4].GetType() == typeof(string)));
+        Console.WriteLine(String.Format("Body Weight : {0}: Matches requirement:{1}", columns[5].GetType(), columns[5].GetType() == typeof(float)));
+        Console.WriteLine(String.Format("Body SIM type: {0}: Matches requirement:{1}", columns[6].GetType(), columns[6].GetType() == typeof(string)));
+        Console.WriteLine(String.Format("Display type: {0}: Matches requirement:{1}", columns[7].GetType(), columns[7].GetType() == typeof(string)));
+        Console.WriteLine(String.Format("Display size type: {0}: Matches requirement:{1}", columns[8].GetType(), columns[8].GetType() == typeof(float)));
+        Console.WriteLine(String.Format("Display resolution type: {0}: Matches requirement:{1}", columns[9].GetType(), columns[9].GetType() == typeof(string)));
+        Console.WriteLine(String.Format("Feature sensors type: {0}: Matches requirement:{1}", columns[10].GetType(), columns[10].GetType() == typeof(string)));
+        Console.WriteLine(String.Format("Operating System type: {0}: Matches requirement:{1}", columns[11].GetType(), columns[11].GetType() == typeof(string)));
+
+        string invalidCahr = "-";
+        bool charFound = false;
+        int data = cellData.GetNumCells();
+
+        for (int i = 0; i < data; i++) {
+            Cell cell = cellData.GetCell(i);
+            Object[] cellColumns = cell.GetColumns();
+
+            for (int j = 0; i < cellColumns.Length; i++) {
+                Object[] column = cellColumns[i];
+
+                if (column == typeof(string)) {
+                    charFound = column.Equals(invalidChar);
+                }
+            }
+        }
+
+        Console.WriteLine(String.Format("\nThe '-' character was found: {0}", charFound));
+
+        string[] iPhone = {
+            "Apple",
+            "iPhone 18" ,
+            "2027, November 10",
+            "Coming soon. Exp. release 2028, September",
+            "-",
+            "283 g (9.98 oz)",
+            "-",
+            "-",
+            "6 inches",
+            "1840 x 2208 pixels, 17.4:9 ratio, 1000 ppi",
+            "Wireless Charging, Spatial Audio, ApplePay",
+            "iOS 20"
+        };
+
+        Object[] expectedResults = { 
+            "Apple", 
+            "iPhone 18", 
+            2027, 
+            "2028", 
+            null, 
+            283f, 
+            null, 
+            null, 
+            6f, 
+            "1840 x 2208 pixels, 17.4:9 ratio, 1000 ppi", 
+            "Wireless Charging, Spatial Audio, ApplePay", 
+            "iOS 20" 
+        };
+
+        int iPhoneIndex = cellData.AddCell(iphone);
+        Cell iPhoneSample = cellData.GetCell(iPhoneIndex);
+        Object[] iPhoneAttributes = iPhoneSample.GetColumns();
+
+        bool matchExpected = true;
+
+        for (int i = 0; i < iPhoneAttributes[i].Equals(expectedResults[i])) {
+            if (iPhoneAttributes[i] == null) {
+                matchExpected = expectedResults[i] == null;
+            }
+            else if (!iPhoneAttributes[i].Equals(expectedResults[i])) {
+                matchExpected = false;
+            }
+        }
+
+        Console.WriteLine(String.Format("\nAll outputs match expected: {0}", matchExpected));
+
+        int expectedSize = 996;
+        int[] removed = { 100, 200, 300, 400, 500 };
+
+        for (int i = 0; i < removed.Length; i++) {
+            cellData.DeleteCell(removed[i]);
+        }
+
+        bool sizeMatch = cellData.GetNumCells() == expectedSize;
+        Console.WriteLine(String.Format("\nRemoved all data at indices: {0}", sizeMatch));
+
+        int expected = 1, actual = 0;
+        Cell g4 = cellData.GetCell(5);
+        Cell g4XL = cellData.GetCell(4);
+
+        actual = g4XL.CompareTo(g4);
+        Console.WriteLine(String.Format("\nGoogle Pixel 4XL weighs more than the Google Pixel 4: {0}", expected == actual));
     }
 }
