@@ -62,7 +62,7 @@ Using an unfamiliar language to do operations on a csv file.
     432
 
     Screenshot: 
-![Screenshot of OneFeatureCells function output](<Screenshot 2024-04-20 at 4.07.05 PM.png>)
+        ![Screenshot of OneFeatureCells function output](<Screenshot 2024-04-20 at 4.07.05 PM.png>)
 
 
 ### What year had the most phones launched in any year later than 1999? 
