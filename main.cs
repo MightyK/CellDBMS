@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using Microsoft.VisualBasic.FileIO;
 using System.Text.RegularExpressions;
 
 class Program {
@@ -47,7 +48,7 @@ class Program {
             columnsArr = new Object[csvSource.Length];
             this.db_ind = db_ind;
 
-            CleanAndIngest(csvSource)
+            CleanAndIngest(csvSource);
         }
 
         // Get a specific column
@@ -73,10 +74,10 @@ class Program {
         // Get string representation of the cell with verbose information
         public String ToStringVerbose() {
             StringBuilder sb = new StringBuilder();
-            sb.Append(String.Format("\nIndex: {0}", db_ind));
+            sb.Append($"\nIndex: {db_ind}");
 
             for (int i  = 0; i < columnsArr.Length; i++) {
-                sb.Append(String.Format("\n{0}: {1}", columnHeaders[i], columnsArr[i]));
+                sb.Append($"\n{columnHeaders[i]}: {columnsArr[i]}");
             }
 
             return sb.ToString();
@@ -237,15 +238,15 @@ class Program {
 
         // Constructor
         public CellData() {
-            CellData = new Dictionary<int, Cell>(); // Initiallize Cell data dictionary
+            cellData = new Dictionary<int, Cell>(); // Initiallize Cell data dictionary
         }
 
         // Parse CSV file data using RegEx
         public void RegexCellData(string filePath) {
-            string[] lines = File.ReadAllAllLines(filePath);    // Read all lines in the CSV file
+            string[] lines = File.ReadAllLines(filePath);    // Read all lines in the CSV file
 
             for (int i = 1; i < lines.Length; i++) {    // Skip the header, start from the second element
-                RegexCellData innerStr = new RegexCellData(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))", RegexOptions.IgnoreCase);
+                Regex innerStr = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))", RegexOptions.IgnoreCase);
 
                 string[] cellDataFields = innerStr.Split(lines[i]); // Use RegEx to split CSV data
                 AddCell(cellDataFields);    // Add Cell data to the database
@@ -275,27 +276,27 @@ class Program {
 
         // Get a cell from the database by index
         public Cell GetCell(int index) {
-            return CellData[index];
+            return cellData[index];
         }
 
         // Add a new cell to the database
         public int AddCell(string[] data) {
             Cell newCell = new Cell(numCells, data);
-            CellData.Add(numCells, newCell);    // Add Cell to the Dictionary
+            cellData.Add(numCells, newCell);    // Add Cell to the Dictionary
 
             return numCells++;  // Increment Cell count and return the index
         }
 
         public bool DeleteCell(int index) {
-            if (CellData.ContainsKey(index)) {
-                CellData.Remove(index); // Remove Cell from the Dictionary
+            if (cellData.ContainsKey(index)) {
+                cellData.Remove(index); // Remove Cell from the Dictionary
                 
                 numCells--;
 
                 return true;
             }
 
-            Console.WriteLine("Cell at selected index does not exist!")
+            Console.WriteLine("Cell at selected index does not exist!");
 
             return false;
         }
@@ -314,12 +315,12 @@ class Program {
 
         // Print all Cells from a specific company in the database
         public void PrintCellsByOEM(string company) {
-            List<Cell> cells = new List<Cell();
+            List<Cell> cells = new List<Cell>();
 
-            Console.WriteLine(String.Format(Searcing for Cells by OEM: \"{0}\"...", company));
+            Console.WriteLine($"Searching for Cells by OEM: \"{company}\"...");
 
             foreach(KeyValuePair<int, Cell> cell in cellData) {
-                if (pair.Value.GetColumn(Cell.Attributes.Oem).Equals(company)) {
+                if (cell.Value.GetColumn(Cell.Attributes.Oem).Equals(company)) {
                     cells.Add(cell.Value);
                 }
 
@@ -334,11 +335,11 @@ class Program {
 
         // Print certain weight statistics pertaining to the database
         public void PrintWeights() {
-            int minInd = 0, int maxInd = 0;
+            int minInd = 0, maxInd = 0;
             float sum = 0, mean = 0, maxWeight = 0, minWeight =int.MaxValue;
 
             List<Cell> cells = new List<Cell>();
-            Dictionary<float, int> weights = new Dictionary<float, int><float, int>();
+            Dictionary<float, int> weights = new Dictionary<float, int>();
 
             foreach(KeyValuePair<int, Cell> cell in cellData) {
                 Cell currentCell = cell.Value;
@@ -373,13 +374,13 @@ class Program {
 
             mean = sum / cells.Count;
 
-            StringBuilder sb  new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             
-            sb.Append(String.Format("Lightest: {0} {1}: {2} (g)", cellData[minInd].GetColumn(Cell.Attributes.Oem), cellData[minInd].GetColumn(Cell.Attributes.Model), cellData[minInd].GetColumn(Cell.Attributes.BodyWeight)));
+            sb.Append($"Lightest: {cellData[minInd].GetColumn(Cell.Attributes.Oem)} {cellData[minInd].GetColumn(Cell.Attributes.Model)}: {cellData[minInd].GetColumn(Cell.Attributes.BodyWeight)} (g)");
             
-            sb.Append(String.Format("\nHeaviest: {0} {1}: {2} (g)", cellData[maxInd].GetColumn(Cell.Attributes.Oem), cellData[maxInd].GetColumn(Cell.Attributes.Model), cellData[maxInd].GetColumn(Cell.Attributes.BodyWeight)));
+            sb.Append($"\nHeaviest: {cellData[maxInd].GetColumn(Cell.Attributes.Oem)} {cellData[maxInd].GetColumn(Cell.Attributes.Model)}: {cellData[maxInd].GetColumn(Cell.Attributes.BodyWeight)} (g)");
             
-            sb.Append(String.Format("\nAverage Weight: {0} (g)", mean));
+            sb.Append($"\nAverage Weight: {mean} (g)");
             
             Console.WriteLine(sb.ToString());
         }
@@ -423,7 +424,7 @@ class Program {
             StringBuilder sb = new StringBuilder();
 
             foreach (KeyValuePair<string, int> cell in cells) {
-                sb.Append(String.Format("\n{0}: {1} results found: {2}", columnHeader, cell.Key, cell.Value));
+                sb.Append($"\n{columnHeader}: {cell.Key} results found: {cell.Value}");
 
                 if (cell.Value > mode) {
                     mode = cell.Value;
@@ -431,7 +432,7 @@ class Program {
                 }
             }
 
-            sb.Append(String.Format("\Most common {0} is {1} with {2} instances discovered!", columnHeader, modeRes, mode));
+            sb.Append($"\nMost common {columnHeader} is {modeRes} with {mode} instances discovered!");
 
             Console.WriteLine(sb.ToString());
         }
@@ -460,7 +461,7 @@ class Program {
             StringBuilder sb = new StringBuilder();
 
             if (year != 0) {
-                sb.Append(String.Format("\nDevices released in {0}: {1}", year, release[year]));
+                sb.Append($"\nDevices released in {year}: {release[year]}");
             }
             else {
                 foreach (KeyValuePair<int, int> cell in release) {
@@ -470,10 +471,10 @@ class Program {
                     }
                 }
 
-                sb.Append(String.Format("\nThe year with the most released devices is {0} with {1} releases.", yearMaxCells, numDevices));
+                sb.Append($"\nThe year with the most released devices is {yearMaxCells} with {numDevices} releases.");
             }
 
-            Console.Writeine(sb.ToString());
+            Console.WriteLine(sb.ToString());
         }
     }
 
@@ -487,7 +488,7 @@ class Program {
         // Perform various operations on Cell data
         cellData.PrintCellsByOEM("Kyocera");
 
-        Console.WriteLine("\n\nPRINTING CELL STATISTICS BY WEIGHT: ")
+        Console.WriteLine("\n\nPRINTING CELL STATISTICS BY WEIGHT: ");
         cellData.PrintWeights();
 
         Console.WriteLine("\n\nPRINTING NUMBER OF CELL DEVICES RELEASED IN 2007: ");
@@ -521,12 +522,13 @@ class Program {
         // Runt unit tests
         UnitTests();
 
-        Console.WriteLine("\n\nTESTS FOR REPORT: ")
-        MaxAvgWeightCell(cellData);
+        Console.WriteLine("\n\nTESTS FOR REPORT: ");
         DelayedCells(cellData);
         OneFeatureCells(cellData);
+        MaxAvgWeightCell(cellData);
     }
 
+    // Prints the OEM with the higest average weight among their Cells
     public static void MaxAvgWeightCell(CellData cellData) {
         float maxAvg = 0;
         string maxAvgOEM = "";
@@ -550,8 +552,11 @@ class Program {
                 maxAvgOEM = oem;
             }
         }
+
+        Console.WriteLine($"{maxAvgOEM} has the heaviest average Cell device with a weight of {maxAvg} (g)");
     }   
 
+    // Print Cell devices with only one feature
     public static void OneFeatureCells(CellData cellData)  {
         int data = cellData.GetNumCells();
         List<Cell> cells = new List<Cell>();
@@ -568,10 +573,11 @@ class Program {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.Append(String.Format("\nCell phones with one feature: {0}", cells.Count));
+        sb.Append($"\nCell phones with one feature: {cells.Count}\n");
         Console.WriteLine(sb.ToString());
     }
 
+    // Print Cells with release dates later than originally announced
     public static void DelayedCells(CellData cellData) {
         int data = cellData.GetNumCells();
         List<Cell> cells = new List<Cell>();
@@ -592,15 +598,16 @@ class Program {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.Append(String.Format("\n{0} cell phones with delayed releases: ", cells.Count));
+        sb.Append($"\n{cells.Count} cell phones with delayed releases: ");
 
         foreach (Cell cell in cells) {
-            sb.Append(String.Format("\n{0} {1}", cell.GetColumn(Cell.Attributes.Oem), cell.GetColumn(Cell.Attributes.Model)))
+            sb.Append($"\n{cell.GetColumn(Cell.Attributes.Oem)} {cell.GetColumn(Cell.Attributes.Model)}");
         }
 
         Console.WriteLine(sb.ToString());
     }
 
+    // Various tests for validating the data and functions being used to complete operations
     public static void UnitTests() {
         Console.WriteLine("\n\nUNIT TESTS: ");
         
@@ -608,28 +615,28 @@ class Program {
         int seen = cellData.GenerateCellData(fileName); // Parse CSV data and generate cell database
 
         // Test various aspects of the cell data
-        Console.WriteLine(String.Format("Lines in file: {0}", seen));
+        Console.WriteLine($"Lines in file: {seen}");
 
-        Console.WriteLine(string.Format("Database is not empty: {0}", cellData.GetNumCells() > 0))
+        Console.WriteLine($"Database is not empty: {cellData.GetNumCells() > 0}");
 
 
         Cell testCell = cellData.GetCell(300);
         Object[] columns = testCell.GetColumns();
 
-        Console.WriteLine(String.Format("OEM type: {0}: Matches requirement: {1}", columns[0].GetType(), columns[0].GetType() == typeof(string)));
-        Console.WriteLine(String.Format("Model type: {0}: Matches requirement:{1}", columns[1].GetType(), columns[1].GetType() == typeof(string)));
-        Console.WriteLine(String.Format("Launch Announce type: {0}: Matches requirement:{1}", columns[2].GetType(), columns[2].GetType() == typeof(int)));
-        Console.WriteLine(String.Format("Launch status type: {0}: Matches requirement:{1}", columns[3].GetType(), columns[3].GetType() == typeof(string)));
-        Console.WriteLine(String.Format("Body Dimensions : {0}: Matches requirement:{1}", columns[4].GetType(), columns[4].GetType() == typeof(string)));
-        Console.WriteLine(String.Format("Body Weight : {0}: Matches requirement:{1}", columns[5].GetType(), columns[5].GetType() == typeof(float)));
-        Console.WriteLine(String.Format("Body SIM type: {0}: Matches requirement:{1}", columns[6].GetType(), columns[6].GetType() == typeof(string)));
-        Console.WriteLine(String.Format("Display type: {0}: Matches requirement:{1}", columns[7].GetType(), columns[7].GetType() == typeof(string)));
-        Console.WriteLine(String.Format("Display size type: {0}: Matches requirement:{1}", columns[8].GetType(), columns[8].GetType() == typeof(float)));
-        Console.WriteLine(String.Format("Display resolution type: {0}: Matches requirement:{1}", columns[9].GetType(), columns[9].GetType() == typeof(string)));
-        Console.WriteLine(String.Format("Feature sensors type: {0}: Matches requirement:{1}", columns[10].GetType(), columns[10].GetType() == typeof(string)));
-        Console.WriteLine(String.Format("Operating System type: {0}: Matches requirement:{1}", columns[11].GetType(), columns[11].GetType() == typeof(string)));
+        Console.WriteLine($"OEM Type: {columns[0].GetType()}: Matches requirement: {columns[0].GetType() == typeof(string)}");
+        Console.WriteLine($"Model Type: {columns[1].GetType()}: Matches requirement: {columns[1].GetType() == typeof(string)}");
+        Console.WriteLine($"Launch Announce Type: {columns[2].GetType()}: Matches requirement: {columns[2].GetType() == typeof(int)}");
+        Console.WriteLine($"Launch status Type: {columns[3].GetType()}: Matches requirement: {columns[3].GetType() == typeof(string)}");
+        Console.WriteLine($"Body Dimensions Type: {columns[4].GetType()}: Matches requirement: {columns[4].GetType() == typeof(string)}");
+        Console.WriteLine($"Body Weight Type: {columns[5].GetType()}: Matches requirement: {columns[5].GetType() == typeof(float)}");
+        Console.WriteLine($"Body SIM Type: {columns[6].GetType()}: Matches requirement: {columns[6].GetType() == typeof(string)}");
+        Console.WriteLine($"Display Type: {columns[7].GetType()}: Matches requirement: {columns[7].GetType() == typeof(string)}");
+        Console.WriteLine($"Display Size Type: {columns[8].GetType()}: Matches requirement: {columns[8].GetType() == typeof(float)}");
+        Console.WriteLine($"Display Resolution Type: {columns[9].GetType()}: Matches requirement:{columns[9].GetType() == typeof(string)}");
+        Console.WriteLine($"Feature Sensors Type: {columns[10].GetType()}: Matches requirement:{columns[10].GetType() == typeof(string)}");
+        Console.WriteLine($"Operating System Type: {columns[11].GetType()}: Matches requirement:{columns[11].GetType() == typeof(string)}");
 
-        string invalidCahr = "-";
+        string invalidChar = "-";
         bool charFound = false;
         int data = cellData.GetNumCells();
 
@@ -638,7 +645,7 @@ class Program {
             Object[] cellColumns = cell.GetColumns();
 
             for (int j = 0; i < cellColumns.Length; i++) {
-                Object[] column = cellColumns[i];
+                Object column = cellColumns[i];
 
                 if (column == typeof(string)) {
                     charFound = column.Equals(invalidChar);
@@ -646,7 +653,7 @@ class Program {
             }
         }
 
-        Console.WriteLine(String.Format("\nThe '-' character was found: {0}", charFound));
+        Console.WriteLine($"\nThe '-' character was found: {charFound}");
 
         string[] iPhone = {
             "Apple",
@@ -678,13 +685,13 @@ class Program {
             "iOS 20" 
         };
 
-        int iPhoneIndex = cellData.AddCell(iphone);
+        int iPhoneIndex = cellData.AddCell(iPhone);
         Cell iPhoneSample = cellData.GetCell(iPhoneIndex);
         Object[] iPhoneAttributes = iPhoneSample.GetColumns();
 
         bool matchExpected = true;
 
-        for (int i = 0; i < iPhoneAttributes[i].Equals(expectedResults[i])) {
+        for (int i = 0; i < iPhoneAttributes.Length; i++) {
             if (iPhoneAttributes[i] == null) {
                 matchExpected = expectedResults[i] == null;
             }
@@ -693,7 +700,7 @@ class Program {
             }
         }
 
-        Console.WriteLine(String.Format("\nAll outputs match expected: {0}", matchExpected));
+        Console.WriteLine($"\nAll outputs match expected: {matchExpected}");
 
         int expectedSize = 996;
         int[] removed = { 100, 200, 300, 400, 500 };
@@ -703,13 +710,13 @@ class Program {
         }
 
         bool sizeMatch = cellData.GetNumCells() == expectedSize;
-        Console.WriteLine(String.Format("\nRemoved all data at indices: {0}", sizeMatch));
+        Console.WriteLine($"\nRemoved all data at indices: {sizeMatch}");
 
         int expected = 1, actual = 0;
-        Cell g4 = cellData.GetCell(5);
-        Cell g4XL = cellData.GetCell(4);
+        Cell sQ100 = cellData.GetCell(596);
+        Cell sQ200 = cellData.GetCell(594);
 
-        actual = g4XL.CompareTo(g4);
-        Console.WriteLine(String.Format("\nGoogle Pixel 4XL weighs more than the Google Pixel 4: {0}", expected == actual));
+        actual = sQ200.CompareTo(sQ100);
+        Console.WriteLine($"\nSamsung Q200 weighs more than the Samsung Q100: {expected == actual}");
     }
 }
