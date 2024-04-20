@@ -488,7 +488,23 @@ class Program {
     }   
 
     public static void OneFeatureCells(CellData cellData)  {
+        int data = cellData.GetNumCells();
+        List<Cell> cells = new List<Cell>();
 
+        for (int i = 0; i < data; i++) {
+            Cell cell = cellData.GetCell(i);
+            string features = (string)cell.GetColumn(Cell.Attributes.FeatureSensors);
+            string[] featsArr = features.Split(',');
+
+            if (featsArr.Length == 1) {
+                cells.Add(cell);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.Append(String.Format("\nCell phones with one feature: {0}", cells.Count));
+        Console.WriteLine(sb.ToString());
     }
 
     public static void DelayedCells(CellData cellData) {
@@ -496,6 +512,6 @@ class Program {
     }
 
     public static void UnitTests() {
-        
+
     }
 }
