@@ -477,10 +477,54 @@ class Program {
         }
     }
 
+    // Main program entry point
     static string fileName = "cells.csv";
 
     public static void Main (string[] args) {
+        CellData cellData = new CellData();
+        int seen = cellData.GenerateCellData(fileName); // Parse CSV data and generate cell database
 
+        // Perform various operations on Cell data
+        cellData.PrintCellsByOEM("Kyocera");
+
+        Console.WriteLine("\n\nPRINTING CELL STATISTICS BY WEIGHT: ")
+        cellData.PrintWeights();
+
+        Console.WriteLine("\n\nPRINTING NUMBER OF CELL DEVICES RELEASED IN 2007: ");
+        cellData.PrintYearlyReleases(2007);
+
+        // Add a sample Cell and test deletion
+        string[] galaxyS22 = {
+            "Samsung",
+            "Galaxy s22" ,
+            "2022, February 09",
+            "Available. Released 2022, February 25",
+            "146 x 70.6 x 7.6 mm",
+            "167 g (5.89 oz)",
+            "Nano-SIM and eSIM or Dual SIM",
+            "OLED capacitive touchscreen, 16M colors",
+            "5.8 inches",
+            "1080 x 2340 pixels, 19.5:9 ratio, 425 ppi",
+            "Fingerprint (under display, ultrasonic), accelerometer, gyro, proximity, compass, barometer",
+            "Android 14"
+        };
+
+        int cellIndex = 1000;
+
+        cellData.AddCell(galaxyS22);    // Add the sample Cell
+        Console.WriteLine("\n\nQUERY AFTER ADDING SAMPLE DATA: ");
+        cellData.PrintCellsByOEM("Samsung");
+        cellData.DeleteCell(cellIndex); // Delete the sample Cell
+        Console.WriteLine("\n\nQUERY AFTER DELETING SAMPLE DATA: ");
+        cellData.PrintCellsByOEM("Samsung");
+
+        // Runt unit tests
+        UnitTests();
+
+        Console.WriteLine("\n\nTESTS FOR REPORT: ")
+        MaxAvgWeightCell(cellData);
+        DelayedCells(cellData);
+        OneFeatureCells(cellData);
     }
 
     public static void MaxAvgWeightCell(CellData cellData) {
