@@ -526,6 +526,7 @@ class Program {
         DelayedCells(cellData);
         OneFeatureCells(cellData);
         MaxAvgWeightCell(cellData);
+        cellData.PrintYearlyReleases();
     }
 
     // Prints the OEM with the higest average weight among their Cells
