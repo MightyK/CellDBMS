@@ -508,7 +508,32 @@ class Program {
     }
 
     public static void DelayedCells(CellData cellData) {
+        int data = cellData.GetNumCells();
+        List<Cell> cells = new List<Cell>();
 
+        for (int i = 0; i < data; i++) {
+            int launched;
+            Cell cell = cellData.GetCell(i);
+            int announced = (int)cell.GetColumn(Cell.Attributes.LaunchAnnounced);
+            string launchStatus = (string)cell.GetColumn(Cell.Attributes.LaunchStatus);
+
+            Regex regex = new Regex("\\d{4}", RegexOptions.None);
+            Match match = regex.Match(launchStatus);
+            Int32.TryParse(match.Value, out launched);
+
+            if (launched > 0 && announced != launched) {
+                cells.Add(cell);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.Append(String.Format("\n{0} cell phones with delayed releases: ", cells.Count));
+
+        foreach (Cell cell in cells) {
+            sb.Append(String.Format("\n{0} {1}", cell.GetColumn(Cell.Attributes.Oem), cell.GetColumn(Cell.Attributes.Model)))
+        }
+
+        Console.WriteLine(sb.ToString());
     }
 
     public static void UnitTests() {
