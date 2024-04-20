@@ -483,5 +483,19 @@ class Program {
 
     }
 
-    
+    public static void MaxAvgWeightCell(CellData cellData) {
+
+    }   
+
+    public static void OneFeatureCells(CellData cellData)  {
+
+    }
+
+    public static void DelayedCells(CellData cellData) {
+
+    }
+
+    public static void UnitTests() {
+        
+    }
 }
